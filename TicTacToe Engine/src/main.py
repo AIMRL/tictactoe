@@ -16,35 +16,59 @@ import time
 from tkFont import Font
 import tkMessageBox
 
+#===============================================================================
+# provide names of agent files
+#===============================================================================
+
+AGENT_ONE = 'a1.py'
+AGENT_TWO = 'a2.py'
+
+#------------------------------------------------------------------------------ 
 
 class AgentInteractionManager:
+    
+    @staticmethod
+    def load_agent():
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        script_path = os.path.join(script_dir,AGENT_ONE)
+        if AGENT_ONE.split('.')[1] == 'py':
+            a1 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        elif AGENT_ONE.split('.')[1] == 'exe':
+            a1 = Popen([script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        else:
+            tkMessageBox.showerror("Invalid agent 1", "The agent must be a exe file or python file")
+            exit()
+        
+        script_path = os.path.join(script_dir,'a2.py')
+        if AGENT_ONE.split('.')[1] == 'py':
+            a2 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        elif AGENT_ONE.split('.')[1] == 'exe':
+            a2 = Popen([script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        else:
+            tkMessageBox.showerror("Invalid agent 2", "The agent must be a exe file or python file")
+            exit()
+            
+        return a1,a2
     
     @classmethod
     def init(cls, gui):
         cls.gui = gui
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        script_path = os.path.join(script_dir,'a1.py')
-        cls.a1 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        script_path = os.path.join(script_dir,'a2.py')
-        cls.a2 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        cls.PLAYER_ONE = 0
+        cls.PLAYER_TWO = 1
+        cls.init_pipes()
+    
+    @classmethod
+    def init_pipes(cls):
+        cls.a1, cls.a2 = cls.load_agent()
         cls.a1.stdin.write(str(1)+os.linesep)
         cls.a2.stdin.write(str(2)+os.linesep)
         cls.agents = [cls.a1, cls.a2]
-        cls.PLAYER_ONE = 0
-        cls.PLAYER_TWO = 1
     
     @classmethod
     def reset(cls):
         cls.a1.kill()
         cls.a2.kill()
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        script_path = os.path.join(script_dir,'a1.py')
-        cls.a1 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        script_path = os.path.join(script_dir,'a2.py')
-        cls.a2 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        cls.a1.stdin.write(str(1)+os.linesep)
-        cls.a2.stdin.write(str(2)+os.linesep)
-        cls.agents = [cls.a1, cls.a2]
+        cls.init_pipes()
     
     @staticmethod
     def row_major_board(board):
