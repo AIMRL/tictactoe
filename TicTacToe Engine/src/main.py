@@ -23,10 +23,10 @@ class AgentInteractionManager:
     def init(cls, gui):
         cls.gui = gui
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        script_path = os.path.join(script_dir,'a1.exe')
-        cls.a1 = Popen([script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        script_path = os.path.join(script_dir,'a2.exe')
-        cls.a2 = Popen([script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        script_path = os.path.join(script_dir,'a1.py')
+        cls.a1 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        script_path = os.path.join(script_dir,'a2.py')
+        cls.a2 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
         cls.a1.stdin.write(str(1)+os.linesep)
         cls.a2.stdin.write(str(2)+os.linesep)
         cls.agents = [cls.a1, cls.a2]
