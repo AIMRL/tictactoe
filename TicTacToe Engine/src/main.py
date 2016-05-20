@@ -20,8 +20,8 @@ import tkMessageBox
 # provide names of agent files
 #===============================================================================
 
-AGENT_ONE = 'a1.py'
-AGENT_TWO = 'a2.py'
+AGENT_ONE = 'SampleAgent.class'
+AGENT_TWO = 'SampleAgent.class'
 
 #------------------------------------------------------------------------------ 
 
@@ -35,15 +35,19 @@ class AgentInteractionManager:
             a1 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
         elif AGENT_ONE.split('.')[1] == 'exe':
             a1 = Popen([script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        elif AGENT_ONE.split('.')[1] == 'class':
+            a1 = Popen(['java','-cp',script_dir,AGENT_ONE.split('.')[0]],stdin=PIPE,stdout=PIPE,stderr=PIPE)
         else:
             tkMessageBox.showerror("Invalid agent 1", "The agent must be a exe file or python file")
             exit()
         
-        script_path = os.path.join(script_dir,'a2.py')
-        if AGENT_ONE.split('.')[1] == 'py':
+        script_path = os.path.join(script_dir,AGENT_TWO)
+        if AGENT_TWO.split('.')[1] == 'py':
             a2 = Popen([sys.executable, '-u', script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
-        elif AGENT_ONE.split('.')[1] == 'exe':
+        elif AGENT_TWO.split('.')[1] == 'exe':
             a2 = Popen([script_path],stdin=PIPE,stdout=PIPE,stderr=PIPE)
+        elif AGENT_TWO.split('.')[1] == 'class':
+            a2 = Popen(['java','-cp',script_dir,AGENT_TWO.split('.')[0]],stdin=PIPE,stdout=PIPE,stderr=PIPE)
         else:
             tkMessageBox.showerror("Invalid agent 2", "The agent must be a exe file or python file")
             exit()
